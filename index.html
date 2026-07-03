@@ -1,1 +1,318 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesap Durum Takip Paneli</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --panel-bg: #1e293b;
+            --text-color: #f8fafc;
+            --accent-color: #3b82f6;
+            --accent-hover: #2563eb;
+            --border-color: #334155;
+            --success-color: #10b981;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid var(--border-color);
+        }
+
+        h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.25rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--accent-color);
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .account-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .account-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--bg-color);
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+        }
+
+        .account-name {
+            font-weight: 500;
+            word-break: break-all;
+            margin-right: 10px;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select {
+            background-color: var(--panel-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 6px 10px;
+            border-radius: 6px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background-color: #ef4444;
+            padding: 6px 10px;
+            font-size: 0.85rem;
+        }
+
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+
+        .output-box {
+            width: 100%;
+            height: 300px;
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: #a7f3d0;
+            font-family: monospace;
+            padding: 12px;
+            border-radius: 6px;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .action-area {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .btn-copy {
+            background-color: var(--success-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-copy:hover {
+            background-color: #059669;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- SOL PANEL: GİRİŞ VE LİSTELEME -->
+    <div class="panel">
+        <h2>Hesap Ekle & Durum Seç</h2>
+        <div class="input-group">
+            <input type="text" id="accountInput" placeholder="Hesap adını yazın..." onkeypress="handleKeyPress(event)">
+            <button onclick="addAccount()">Ekle</button>
+        </div>
+        <div class="account-list" id="accountList">
+            <!-- Hesaplar buraya dinamik gelecek -->
+        </div>
+    </div>
+
+    <!-- SAĞ PANEL: KOPYALAMA ALANI -->
+    <div class="panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+        <div>
+            <h2>Toplu Sonuç Kutusu</h2>
+            <textarea class="output-box" id="outputBox" readonly placeholder="Hesaplar burada listelenecek..."></textarea>
+            <div class="action-area">
+                <button class="btn-copy" id="copyBtn" onclick="copyToClipboard()">Kopyala</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Tarayıcı hafızasından eski verileri çek, yoksa boş dizi oluştur
+    let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+
+    // Sayfa yüklendiğinde listeyi ve çıktı kutusunu yenile
+    window.onload = function() {
+        renderList();
+    };
+
+    function handleKeyPress(e) {
+        if (e.key === 'Enter') {
+            addAccount();
+        }
+    }
+
+    function addAccount() {
+        const input = document.getElementById('accountInput');
+        const name = input.value.trim();
+        
+        if (name === '') return;
+
+        // Yeni hesabı varsayılan "1 hafta" durumuyla ekle
+        accounts.push({
+            id: Date.now(),
+            name: name,
+            status: '1 hafta'
+        });
+
+        input.value = '';
+        saveAndRefresh();
+    }
+
+    function deleteAccount(id) {
+        accounts = accounts.filter(acc => acc.id !== id);
+        saveAndRefresh();
+    }
+
+    function updateStatus(id, newStatus) {
+        const account = accounts.find(acc => acc.id === id);
+        if (account) {
+            account.status = newStatus;
+        }
+        saveAndRefresh();
+    }
+
+    function saveAndRefresh() {
+        // Hafızaya kaydet
+        localStorage.setItem('accounts', JSON.stringify(accounts));
+        renderList();
+    }
+
+    function renderList() {
+        const listContainer = document.getElementById('accountList');
+        const outputBox = document.getElementById('outputBox');
+        
+        listContainer.innerHTML = '';
+        let textOutput = '';
+
+        accounts.forEach(acc => {
+            // Liste elemanını oluştur (Sol Taraf)
+            const item = document.createElement('div');
+            item.className = 'account-item';
+            
+            item.innerHTML = `
+                <span class="account-name">${acc.name}</span>
+                <div class="controls">
+                    <select onchange="updateStatus(${acc.id}, this.value)">
+                        <option value="1 hafta" ${acc.status === '1 hafta' ? 'selected' : ''}>1 hafta</option>
+                        <option value="inceleme devam ediyor" ${acc.status === 'inceleme devam ediyor' ? 'selected' : ''}>inceleme devam ediyor</option>
+                        <option value="itiraz yazıldı" ${acc.status === 'itiraz yazıldı' ? 'selected' : ''}>itiraz yazıldı</option>
+                    </select>
+                    <button class="btn-delete" onclick="deleteAccount(${acc.id})">Sil</button>
+                </div>
+            `;
+            listContainer.appendChild(item);
+
+            // Sağdaki çıktı kutusu metnini birleştir
+            textOutput += `hesap ismi ${acc.name}: ${acc.status}\n`;
+        });
+
+        // Çıktı kutusunu güncelle
+        outputBox.value = textOutput.trim();
+    }
+
+    function copyToClipboard() {
+        const outputBox = document.getElementById('outputBox');
+        const copyBtn = document.getElementById('copyBtn');
+
+        if (outputBox.value.trim() === '') {
+            alert('Kopyalanacak veri yok!');
+            return;
+        }
+
+        outputBox.select();
+        outputBox.setSelectionRange(0, 99999); // Mobil cihazlar için
+
+        navigator.clipboard.writeText(outputBox.value).then(() => {
+            const originalText = copyBtn.innerText;
+            copyBtn.innerText = 'Kopyalandı! ✓';
+            copyBtn.style.backgroundColor = '#047857';
+            
+            setTimeout(() => {
+                copyBtn.innerText = originalText;
+                copyBtn.style.backgroundColor = 'var(--success-color)';
+            }, 2000);
+        }).catch(err => {
+            console.error('Kopyalama başarısız: ', err);
+        });
+    }
+</script>
+
+</body>
+</html>
