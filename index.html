@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Siber Hesap Durum Takip Paneli</title>
     
-    <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
@@ -104,10 +102,8 @@
 
     <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-4 z-10 relative">
         
-        <!-- SOL PANEL: HESAP YÖNETİM ALANI -->
         <div class="lg:col-span-7 glass-card rounded-2xl p-4 md:p-5 flex flex-col justify-between min-h-[460px]">
             <div>
-                <!-- Panel Başlığı ve Temizle Butonu -->
                 <div class="flex items-center justify-between border-b border-purple-950/30 pb-3 mb-4">
                     <h2 class="text-base font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-purple-300 bg-clip-text text-transparent flex items-center gap-2">
                         <i class="fa-solid fa-fire text-purple-500 text-sm"></i>
@@ -118,210 +114,5 @@
                     </button>
                 </div>
                 
-                <!-- Veri Ekleme Grubu -->
                 <div class="input-group flex gap-2 mb-4 pulse-border border border-purple-900/20 bg-[#070515]/90 rounded-lg p-0.5 transition-all duration-300">
-                    <input type="text" id="accountInput" class="w-full bg-transparent px-3 py-1.5 outline-none text-white text-sm font-medium placeholder-slate-600" placeholder="Kullanıcı adını yazın..." onkeypress="handleKeyPress(event)">
-                    <button onclick="addAccount()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs font-bold px-4 py-2 rounded shadow-md transition-all duration-300 flex items-center gap-1.5 shrink-0">
-                        <i class="fa-solid fa-plus text-[10px]"></i> Ekle
-                    </button>
-                </div>
-
-                <!-- Dinamik Hesap Listesi -->
-                <div class="account-list custom-scroll max-h-[300px] overflow-y-auto space-y-2 pr-1" id="accountList">
-                    <!-- Javascript ile doldurulacaktır -->
-                </div>
-            </div>
-        </div>
-
-        <!-- SAĞ PANEL: HAZIR ÇIKTI KUTUSU -->
-        <div class="lg:col-span-5 glass-card rounded-2xl p-4 md:p-5 flex flex-col justify-between min-h-[460px]">
-            <div class="flex flex-col h-full justify-between">
-                <div>
-                    <!-- Panel Başlığı -->
-                    <div class="border-b border-purple-950/30 pb-3 mb-4">
-                        <h2 class="text-base font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-pink-300 bg-clip-text text-transparent flex items-center gap-2">
-                            <i class="fa-solid fa-circle-check text-pink-500 text-sm"></i>
-                            <span>Hazır Çıktı Kutusu</span>
-                        </h2>
-                    </div>
-
-                    <!-- Çıktı Textarea Alanı -->
-                    <div class="relative group">
-                        <textarea class="w-full h-[270px] bg-[#05030f] border border-purple-950/40 rounded-xl p-3.5 text-emerald-400 font-mono text-xs leading-relaxed outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 shadow-inner custom-scroll transition-all duration-300 resize-none" id="outputBox" readonly placeholder="Hesaplar ekledikçe burası otomatik dolacaktır..."></textarea>
-                        <div class="absolute top-2.5 right-2.5 flex items-center gap-1 bg-[#0b0821]/90 border border-purple-900/30 px-1.5 py-0.5 rounded text-[8px] font-bold text-purple-400 tracking-wider">
-                            <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span> CANLI
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Kopyalama Butonu -->
-                <div class="mt-4">
-                    <button class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2 text-sm" id="copyBtn" onclick="copyToClipboard()">
-                        <i class="fa-solid fa-copy text-sm"></i>
-                        <span>Listeyi Kopyala</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <script>
-        let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
-
-        window.onload = function() {
-            renderList();
-        };
-
-        function handleKeyPress(e) {
-            if (e.key === 'Enter') {
-                addAccount();
-            }
-        }
-
-        function addAccount() {
-            const input = document.getElementById('accountInput');
-            const name = input.value.trim();
-            
-            if (name === '') return;
-
-            accounts.push({
-                id: Date.now(),
-                name: name,
-                status: '1 hafta',
-                active: true
-            });
-
-            input.value = '';
-            saveAndRefresh();
-        }
-
-        if (typeof deleteAccount !== 'function') {
-            window.deleteAccount = function(id) {
-                accounts = accounts.filter(acc => acc.id !== id);
-                saveAndRefresh();
-            };
-        }
-
-        function clearAll() {
-            accounts = [];
-            saveAndRefresh();
-        }
-
-        function updateStatus(id, newStatus) {
-            const account = accounts.find(acc => acc.id === id);
-            if (account) {
-                account.status = newStatus;
-            }
-            saveAndRefresh();
-        }
-
-        function toggleActive(id) {
-            const account = accounts.find(acc => acc.id === id);
-            if (account) {
-                account.active = !account.active;
-            }
-            saveAndRefresh();
-        }
-
-        function saveAndRefresh() {
-            localStorage.setItem('accounts', JSON.stringify(accounts));
-            renderList();
-        }
-
-        function renderList() {
-            const listContainer = document.getElementById('accountList');
-            const outputBox = document.getElementById('outputBox');
-            const clearAllBtn = document.getElementById('clearAllBtn');
-            
-            listContainer.innerHTML = '';
-            let textOutput = '';
-
-            if (accounts.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center text-center py-8 px-3 text-slate-500 border border-dashed border-purple-950/20 rounded-xl bg-[#060411]/25">
-                        <i class="fa-solid fa-box-open text-2xl mb-1.5 text-purple-900/40"></i>
-                        <p class="text-xs font-semibold">Henüz hiç hesap eklemediniz.</p>
-                    </div>
-                `;
-                clearAllBtn.style.display = 'none';
-            } else {
-                clearAllBtn.style.display = 'flex';
-            }
-
-            accounts.forEach(acc => {
-                if (acc.active === undefined) {
-                    acc.active = true;
-                }
-
-                const item = document.createElement('div');
-                item.className = 'flex items-center justify-between bg-[#080517] border border-purple-950/30 hover:border-purple-800/40 p-2 rounded-lg transition-all duration-200 group';
-                
-                let borderHighlight = '';
-                if (acc.active) {
-                    if (acc.status === '1 hafta') borderHighlight = 'border-l-[3px] border-l-blue-500';
-                    else if (acc.status === 'inceleme devam ediyor') borderHighlight = 'border-l-[3px] border-l-amber-500';
-                    else if (acc.status === 'itiraz yazıldı') borderHighlight = 'border-l-[3px] border-l-green-500';
-                } else {
-                    borderHighlight = 'border-l-[3px] border-l-slate-800 opacity-50';
-                }
-
-                item.className += ' ' + borderHighlight;
-                
-                item.innerHTML = `
-                    <div class="flex items-center gap-2 min-w-0 flex-1">
-                        <button onclick="toggleActive(${acc.id})" 
-                                class="p-1.5 rounded transition-all shrink-0 ${acc.active ? 'bg-purple-500/10 hover:bg-purple-500 text-purple-400 hover:text-white border border-purple-500/15' : 'bg-[#03010a] hover:bg-slate-900 text-slate-600 hover:text-slate-400 border border-slate-950/50'}" 
-                                title="${acc.active ? 'Pasif Yap (Çıktıdan Gizle)' : 'Aktif Yap (Çıktıya Ekle)'}">
-                            <i class="fa-solid ${acc.active ? 'fa-eye' : 'fa-eye-slash'} text-[10px]"></i>
-                        </button>
-                        <span class="font-bold text-xs truncate max-w-[120px] sm:max-w-[200px] transition-all ${acc.active ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 line-through select-none'}">${acc.name}</span>
-                    </div>
-
-                    <div class="flex items-center gap-1.5 shrink-0">
-                        <select onchange="updateStatus(${acc.id}, this.value)" 
-                                ${acc.active ? '' : 'disabled'} 
-                                class="bg-[#04020a] text-[10px] font-bold ${acc.active ? 'text-slate-300 border-purple-950/60 focus:border-purple-600 cursor-pointer hover:text-white' : 'text-slate-600 border-slate-950/30 cursor-not-allowed select-none'} border px-2 py-1 rounded outline-none transition-all">
-                            <option value="1 hafta" ${acc.status === '1 hafta' ? 'selected' : ''}>1 Hafta</option>
-                            <option value="inceleme devam ediyor" ${acc.status === 'inceleme devam ediyor' ? 'selected' : ''}>İnceleme</option>
-                            <option value="itiraz yazıldı" ${acc.status === 'itiraz yazıldı' ? 'selected' : ''}>İtiraz Yazıldı</option>
-                        </select>
-                        <button class="bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/10 p-1.5 rounded transition-all" onclick="deleteAccount(${acc.id})" title="Sil">
-                            <i class="fa-solid fa-trash-can text-[10px]"></i>
-                        </button>
-                    </div>
-                `;
-                listContainer.appendChild(item);
-
-                if (acc.active) {
-                    textOutput += `${acc.name}: ${acc.status}\n`;
-                }
-            });
-
-            outputBox.value = textOutput.trim();
-        }
-
-        function copyToClipboard() {
-            const outputBox = document.getElementById('outputBox');
-            const copyBtn = document.getElementById('copyBtn');
-
-            if (outputBox.value.trim() === '') {
-                return;
-            }
-
-            outputBox.select();
-            outputBox.setSelectionRange(0, 99999);
-            document.execCommand('copy');
-
-            const originalContent = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fa-solid fa-circle-check text-sm"></i><span>Kopyalandı!</span>';
-            copyBtn.style.background = 'linear-gradient(to right, #059669, #10b981)';
-            
-            setTimeout(() => {
-                copyBtn.innerHTML = originalContent;
-                copyBtn.style.background = '';
-            }, 1500);
-        }
-    </script>
-</body>
-</html>
+                    <input type="text" id
