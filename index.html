@@ -28,18 +28,12 @@
     </script>
 
     <style>
-        /* Cyberpunk Karanlık Tema Renk Değişkenleri */
         :root {
-            --bg-glow: radial-gradient(circle at 50% 50%, #150f30 0%, #070412 100%);
-            --panel-glass: rgba(16, 12, 38, 0.65);
-            --border-glow: rgba(124, 58, 237, 0.2);
+            --bg-glow: radial-gradient(circle at 50% 50%, #110b26 0%, #05030d 100%);
+            --panel-glass: rgba(13, 9, 30, 0.75);
+            --border-glow: rgba(124, 58, 237, 0.15);
             --primary-neon: #a855f7;
             --secondary-neon: #ec4899;
-            
-            /* Durum Özel Renkleri */
-            --color-week: #3b82f6;         /* Canlı Mavi */
-            --color-pending: #eab308;      /* Neon Sarı/Turuncu */
-            --color-appeal: #22c55e;       /* Zümrüt Yeşili */
         }
 
         body {
@@ -51,122 +45,119 @@
             overflow-x: hidden;
         }
 
-        /* Arka Plan Hareketli Parıltı Küreleri */
         .glow-orb-1 {
             position: absolute;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
-            top: -10%;
-            left: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+            top: -5%;
+            left: -5%;
             z-index: 0;
             pointer-events: none;
-            filter: blur(40px);
+            filter: blur(50px);
         }
 
         .glow-orb-2 {
             position: absolute;
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, transparent 70%);
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.08) 0%, transparent 70%);
             bottom: -5%;
             right: -5%;
             z-index: 0;
             pointer-events: none;
-            filter: blur(40px);
+            filter: blur(50px);
         }
 
-        /* Cam Panel (Glassmorphism) Efekti */
         .glass-card {
             background: var(--panel-glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--border-glow);
-            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.05);
         }
 
-        /* Kusursuz Scrollbar */
         .custom-scroll::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
         }
         .custom-scroll::-webkit-scrollbar-track {
             background: transparent;
         }
         .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(168, 85, 247, 0.2);
+            background: rgba(168, 85, 247, 0.25);
             border-radius: 10px;
         }
         .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: rgba(168, 85, 247, 0.4);
+            background: rgba(168, 85, 247, 0.45);
         }
 
-        /* Giriş Efektleri */
         .pulse-border:focus-within {
             border-color: var(--primary-neon);
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.35);
+            box-shadow: 0 0 12px rgba(168, 85, 247, 0.25);
         }
     </style>
 </head>
-<body class="font-sans text-slate-100 p-4 md:p-8 relative">
+<body class="font-sans text-slate-200 p-3 md:p-5 relative">
 
     <div class="glow-orb-1"></div>
     <div class="glow-orb-2"></div>
 
-    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 z-10 relative">
+    <div class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-4 z-10 relative">
         
         <!-- SOL PANEL: HESAP YÖNETİM ALANI -->
-        <div class="lg:col-span-7 glass-card rounded-3xl p-6 md:p-8 flex flex-col justify-between min-h-[550px]">
+        <div class="lg:col-span-7 glass-card rounded-2xl p-4 md:p-5 flex flex-col justify-between min-h-[460px]">
             <div>
                 <!-- Panel Başlığı ve Temizle Butonu -->
-                <div class="flex items-center justify-between border-b border-purple-950/40 pb-5 mb-6">
-                    <h2 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-purple-300 bg-clip-text text-transparent flex items-center gap-3">
-                        <i class="fa-solid fa-fire text-purple-500"></i>
+                <div class="flex items-center justify-between border-b border-purple-950/30 pb-3 mb-4">
+                    <h2 class="text-base font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-purple-300 bg-clip-text text-transparent flex items-center gap-2">
+                        <i class="fa-solid fa-fire text-purple-500 text-sm"></i>
                         <span>Hesap Yönetim Merkezi</span>
                     </h2>
-                    <button class="text-xs font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg hover:bg-rose-500 hover:text-white transition-all duration-300 flex items-center gap-1.5" onclick="clearAll()" id="clearAllBtn" style="display: none;">
-                        <i class="fa-solid fa-trash-can"></i> Hepsini Temizle
+                    <button class="text-[11px] font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-1 rounded hover:bg-rose-500 hover:text-white transition-all duration-300 flex items-center gap-1" onclick="clearAll()" id="clearAllBtn" style="display: none;">
+                        <i class="fa-solid fa-trash-can text-[10px]"></i> Temizle
                     </button>
                 </div>
                 
                 <!-- Veri Ekleme Grubu -->
-                <div class="input-group flex gap-3 mb-6 pulse-border border border-purple-900/30 bg-[#0b081e]/80 rounded-xl p-1 transition-all duration-300">
-                    <input type="text" id="accountInput" class="w-full bg-transparent px-4 py-3 outline-none text-white font-medium placeholder-slate-500" placeholder="Hesap adını veya kullanıcı adını girin..." onkeypress="handleKeyPress(event)">
-                    <button onclick="addAccount()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold px-6 py-3 rounded-lg shadow-lg shadow-purple-900/40 hover:shadow-purple-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2">
-                        <i class="fa-solid fa-plus text-xs"></i> Ekle
+                <div class="input-group flex gap-2 mb-4 pulse-border border border-purple-900/20 bg-[#070515]/90 rounded-lg p-0.5 transition-all duration-300">
+                    <input type="text" id="accountInput" class="w-full bg-transparent px-3 py-1.5 outline-none text-white text-sm font-medium placeholder-slate-600" placeholder="Kullanıcı adını yazın..." onkeypress="handleKeyPress(event)">
+                    <button onclick="addAccount()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-xs font-bold px-4 py-2 rounded shadow-md transition-all duration-300 flex items-center gap-1.5 shrink-0">
+                        <i class="fa-solid fa-plus text-[10px]"></i> Ekle
                     </button>
                 </div>
 
                 <!-- Dinamik Hesap Listesi -->
-                <div class="account-list custom-scroll max-h-[380px] overflow-y-auto space-y-3 pr-2" id="accountList">
+                <div class="account-list custom-scroll max-h-[300px] overflow-y-auto space-y-2 pr-1" id="accountList">
                     <!-- Javascript ile doldurulacaktır -->
                 </div>
             </div>
         </div>
 
-        <div class="lg:col-span-5 glass-card rounded-3xl p-6 md:p-8 flex flex-col justify-between min-h-[550px]">
+        <!-- SAĞ PANEL: HAZIR ÇIKTI KUTUSU -->
+        <div class="lg:col-span-5 glass-card rounded-2xl p-4 md:p-5 flex flex-col justify-between min-h-[460px]">
             <div class="flex flex-col h-full justify-between">
                 <div>
                     <!-- Panel Başlığı -->
-                    <div class="border-b border-purple-950/40 pb-5 mb-6">
-                        <h2 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-pink-300 bg-clip-text text-transparent flex items-center gap-3">
-                            <i class="fa-solid fa-circle-check text-pink-500"></i>
+                    <div class="border-b border-purple-950/30 pb-3 mb-4">
+                        <h2 class="text-base font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-pink-300 bg-clip-text text-transparent flex items-center gap-2">
+                            <i class="fa-solid fa-circle-check text-pink-500 text-sm"></i>
                             <span>Hazır Çıktı Kutusu</span>
                         </h2>
                     </div>
 
                     <!-- Çıktı Textarea Alanı -->
                     <div class="relative group">
-                        <textarea class="w-full min-h-[320px] bg-[#090616] border border-purple-950/60 rounded-2xl p-5 text-emerald-400 font-mono text-sm leading-relaxed outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 shadow-inner custom-scroll transition-all duration-300" id="outputBox" readonly placeholder="Hesaplar ekledikçe burası otomatik olarak kopyalanmaya hazır şekilde dolacaktır..."></textarea>
-                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-[#120e2e]/90 border border-purple-900/40 px-2.5 py-1 rounded-md text-[10px] font-bold text-purple-400 tracking-wider uppercase">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> CANLI ÇIKTI
+                        <textarea class="w-full h-[270px] bg-[#05030f] border border-purple-950/40 rounded-xl p-3.5 text-emerald-400 font-mono text-xs leading-relaxed outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 shadow-inner custom-scroll transition-all duration-300 resize-none" id="outputBox" readonly placeholder="Hesaplar ekledikçe burası otomatik dolacaktır..."></textarea>
+                        <div class="absolute top-2.5 right-2.5 flex items-center gap-1 bg-[#0b0821]/90 border border-purple-900/30 px-1.5 py-0.5 rounded text-[8px] font-bold text-purple-400 tracking-wider">
+                            <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span> CANLI
                         </div>
                     </div>
                 </div>
 
                 <!-- Kopyalama Butonu -->
-                <div class="mt-6">
-                    <button class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-950/40 hover:shadow-emerald-500/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 text-base" id="copyBtn" onclick="copyToClipboard()">
-                        <i class="fa-solid fa-copy text-lg"></i>
+                <div class="mt-4">
+                    <button class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2 text-sm" id="copyBtn" onclick="copyToClipboard()">
+                        <i class="fa-solid fa-copy text-sm"></i>
                         <span>Listeyi Kopyala</span>
                     </button>
                 </div>
@@ -176,21 +167,18 @@
     </div>
 
     <script>
-        // Tarayıcı hafızasından (LocalStorage) verileri yükleme
         let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
 
         window.onload = function() {
             renderList();
         };
 
-        // Enter Tuşu Yakalama
         function handleKeyPress(e) {
             if (e.key === 'Enter') {
                 addAccount();
             }
         }
 
-        // Yeni Hesap Ekleme
         function addAccount() {
             const input = document.getElementById('accountInput');
             const name = input.value.trim();
@@ -200,26 +188,26 @@
             accounts.push({
                 id: Date.now(),
                 name: name,
-                status: '1 hafta'
+                status: '1 hafta',
+                active: true
             });
 
             input.value = '';
             saveAndRefresh();
         }
 
-        // Hesap Silme
-        function deleteAccount(id) {
-            accounts = accounts.filter(acc => acc.id !== id);
-            saveAndRefresh();
+        if (typeof deleteAccount !== 'function') {
+            window.deleteAccount = function(id) {
+                accounts = accounts.filter(acc => acc.id !== id);
+                saveAndRefresh();
+            };
         }
 
-        // Tüm Hesapları Temizleme
         function clearAll() {
             accounts = [];
             saveAndRefresh();
         }
 
-        // Durum Değiştirme Güncellemesi
         function updateStatus(id, newStatus) {
             const account = accounts.find(acc => acc.id === id);
             if (account) {
@@ -228,13 +216,19 @@
             saveAndRefresh();
         }
 
-        // LocalStorage Kaydetme ve Yeniden Çizdirme
+        function toggleActive(id) {
+            const account = accounts.find(acc => acc.id === id);
+            if (account) {
+                account.active = !account.active;
+            }
+            saveAndRefresh();
+        }
+
         function saveAndRefresh() {
             localStorage.setItem('accounts', JSON.stringify(accounts));
             renderList();
         }
 
-        // Arayüzü Çizdirme ve Çıktıyı Formatlama
         function renderList() {
             const listContainer = document.getElementById('accountList');
             const outputBox = document.getElementById('outputBox');
@@ -243,13 +237,11 @@
             listContainer.innerHTML = '';
             let textOutput = '';
 
-            // Hepsini Temizle butonunun gösterilme durumu
             if (accounts.length === 0) {
                 listContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center text-center py-12 px-4 text-slate-500 border border-dashed border-purple-950/40 rounded-2xl bg-[#090716]/40">
-                        <i class="fa-solid fa-box-open text-4xl mb-3 text-purple-900/60 animate-bounce"></i>
-                        <p class="text-sm font-medium">Henüz hiç hesap eklemediniz.</p>
-                        <p class="text-xs text-slate-600 mt-1">Hemen yukarıdan bir hesap ismi yazıp "Ekle" tuşuna basın.</p>
+                    <div class="flex flex-col items-center justify-center text-center py-8 px-3 text-slate-500 border border-dashed border-purple-950/20 rounded-xl bg-[#060411]/25">
+                        <i class="fa-solid fa-box-open text-2xl mb-1.5 text-purple-900/40"></i>
+                        <p class="text-xs font-semibold">Henüz hiç hesap eklemediniz.</p>
                     </div>
                 `;
                 clearAllBtn.style.display = 'none';
@@ -258,41 +250,57 @@
             }
 
             accounts.forEach(acc => {
-                // Her hesap için dinamik liste elemanı oluştur
+                if (acc.active === undefined) {
+                    acc.active = true;
+                }
+
                 const item = document.createElement('div');
-                item.className = 'flex items-center justify-between bg-[#0e0a29] border border-purple-950/40 hover:border-purple-800/60 p-3.5 rounded-xl transition-all duration-300 group';
+                item.className = 'flex items-center justify-between bg-[#080517] border border-purple-950/30 hover:border-purple-800/40 p-2 rounded-lg transition-all duration-200 group';
                 
-                // Duruma göre kenar rengi belirle
                 let borderHighlight = '';
-                if (acc.status === '1 hafta') borderHighlight = 'border-l-4 border-l-blue-500';
-                else if (acc.status === 'inceleme devam ediyor') borderHighlight = 'border-l-4 border-l-amber-500';
-                else if (acc.status === 'itiraz yazıldı') borderHighlight = 'border-l-4 border-l-green-500';
+                if (acc.active) {
+                    if (acc.status === '1 hafta') borderHighlight = 'border-l-[3px] border-l-blue-500';
+                    else if (acc.status === 'inceleme devam ediyor') borderHighlight = 'border-l-[3px] border-l-amber-500';
+                    else if (acc.status === 'itiraz yazıldı') borderHighlight = 'border-l-[3px] border-l-green-500';
+                } else {
+                    borderHighlight = 'border-l-[3px] border-l-slate-800 opacity-50';
+                }
 
                 item.className += ' ' + borderHighlight;
                 
                 item.innerHTML = `
-                    <span class="font-bold text-sm text-slate-200 truncate max-w-[200px] sm:max-w-[300px] group-hover:text-white transition-colors">${acc.name}</span>
-                    <div class="flex items-center gap-3">
-                        <select onchange="updateStatus(${acc.id}, this.value)" class="bg-[#070514] text-xs font-bold text-slate-300 border border-purple-950/80 px-3 py-2 rounded-lg outline-none cursor-pointer focus:border-purple-600 hover:text-white transition-all">
+                    <div class="flex items-center gap-2 min-w-0 flex-1">
+                        <button onclick="toggleActive(${acc.id})" 
+                                class="p-1.5 rounded transition-all shrink-0 ${acc.active ? 'bg-purple-500/10 hover:bg-purple-500 text-purple-400 hover:text-white border border-purple-500/15' : 'bg-[#03010a] hover:bg-slate-900 text-slate-600 hover:text-slate-400 border border-slate-950/50'}" 
+                                title="${acc.active ? 'Pasif Yap (Çıktıdan Gizle)' : 'Aktif Yap (Çıktıya Ekle)'}">
+                            <i class="fa-solid ${acc.active ? 'fa-eye' : 'fa-eye-slash'} text-[10px]"></i>
+                        </button>
+                        <span class="font-bold text-xs truncate max-w-[120px] sm:max-w-[200px] transition-all ${acc.active ? 'text-slate-300 group-hover:text-white' : 'text-slate-600 line-through select-none'}">${acc.name}</span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 shrink-0">
+                        <select onchange="updateStatus(${acc.id}, this.value)" 
+                                ${acc.active ? '' : 'disabled'} 
+                                class="bg-[#04020a] text-[10px] font-bold ${acc.active ? 'text-slate-300 border-purple-950/60 focus:border-purple-600 cursor-pointer hover:text-white' : 'text-slate-600 border-slate-950/30 cursor-not-allowed select-none'} border px-2 py-1 rounded outline-none transition-all">
                             <option value="1 hafta" ${acc.status === '1 hafta' ? 'selected' : ''}>1 Hafta</option>
-                            <option value="inceleme devam ediyor" ${acc.status === 'inceleme devam ediyor' ? 'selected' : ''}>İnceleme Devam Ediyor</option>
+                            <option value="inceleme devam ediyor" ${acc.status === 'inceleme devam ediyor' ? 'selected' : ''}>İnceleme</option>
                             <option value="itiraz yazıldı" ${acc.status === 'itiraz yazıldı' ? 'selected' : ''}>İtiraz Yazıldı</option>
                         </select>
-                        <button class="bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/10 p-2.5 rounded-lg transition-all duration-200" onclick="deleteAccount(${acc.id})" title="Hesabı Sil">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        <button class="bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/10 p-1.5 rounded transition-all" onclick="deleteAccount(${acc.id})" title="Sil">
+                            <i class="fa-solid fa-trash-can text-[10px]"></i>
                         </button>
                     </div>
                 `;
                 listContainer.appendChild(item);
 
-                // DÜZELTME: Sağdaki çıktı kutusuna sadece "kullanıcı_adı: durum" formatında ekler (Yani "hesap ismi " yazısı kalktı)
-                textOutput += `${acc.name}: ${acc.status}\n`;
+                if (acc.active) {
+                    textOutput += `${acc.name}: ${acc.status}\n`;
+                }
             });
 
             outputBox.value = textOutput.trim();
         }
 
-        // Pano Kopyalama İşlemi
         function copyToClipboard() {
             const outputBox = document.getElementById('outputBox');
             const copyBtn = document.getElementById('copyBtn');
@@ -303,19 +311,16 @@
 
             outputBox.select();
             outputBox.setSelectionRange(0, 99999);
-
-            // Klasik kopyalama motoru (Güvenilir mobil destek)
             document.execCommand('copy');
 
-            // Başarılı Kopyalandı Görsel Geri Bildirimi
             const originalContent = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i><span>Panoya Kopyalandı!</span>';
+            copyBtn.innerHTML = '<i class="fa-solid fa-circle-check text-sm"></i><span>Kopyalandı!</span>';
             copyBtn.style.background = 'linear-gradient(to right, #059669, #10b981)';
             
             setTimeout(() => {
                 copyBtn.innerHTML = originalContent;
                 copyBtn.style.background = '';
-            }, 2000);
+            }, 1500);
         }
     </script>
 </body>
