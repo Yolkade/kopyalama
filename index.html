@@ -3,525 +3,320 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hesap Durum Takip Paneli</title>
-    <!-- Google Fonts ve FontAwesome kütüphaneleri -->
+    <title>Siber Hesap Durum Takip Paneli</title>
+    
+    <!-- Google Fonts & FontAwesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
-    <style>
-        :root {
-            --bg-gradient: radial-gradient(circle at 50% 50%, #121026 0%, #070510 100%);
-            --card-bg: rgba(22, 19, 49, 0.6);
-            --card-border: rgba(99, 102, 241, 0.15);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.4);
-            --primary-hover: #4f46e5;
-            
-            /* Durum Renkleri */
-            --color-week: #3b82f6;       /* Mavi */
-            --color-pending: #f59e0b;    /* Turuncu */
-            --color-appeal: #10b981;     /* Yeşil */
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    }
+                }
+            }
         }
+    </script>
 
-        * {
-            box-sizing: border-box;
-            transition: all 0.2s ease-in-out;
+    <style>
+        /* Cyberpunk Karanlık Tema Renk Değişkenleri */
+        :root {
+            --bg-glow: radial-gradient(circle at 50% 50%, #150f30 0%, #070412 100%);
+            --panel-glass: rgba(16, 12, 38, 0.65);
+            --border-glow: rgba(124, 58, 237, 0.2);
+            --primary-neon: #a855f7;
+            --secondary-neon: #ec4899;
+            
+            /* Durum Özel Renkleri */
+            --color-week: #3b82f6;         /* Canlı Mavi */
+            --color-pending: #eab308;      /* Neon Sarı/Turuncu */
+            --color-appeal: #22c55e;       /* Zümrüt Yeşili */
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            margin: 0;
-            padding: 40px 20px;
+            background: var(--bg-glow);
             min-height: 100vh;
             display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
         }
 
-        /* Arka plan için siber ışık efektleri */
-        .glow-sphere {
+        /* Arka Plan Hareketli Parıltı Küreleri */
+        .glow-orb-1 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+            top: -10%;
+            left: -10%;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .glow-orb-2 {
             position: absolute;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
-            top: 10%;
-            left: 10%;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, transparent 70%);
+            bottom: -5%;
+            right: -5%;
             z-index: 0;
             pointer-events: none;
-        }
-        .glow-sphere-2 {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.12) 0%, transparent 70%);
-            bottom: 10%;
-            right: 10%;
-            z-index: 0;
-            pointer-events: none;
+            filter: blur(40px);
         }
 
-        .container {
-            width: 100%;
-            max-width: 1100px;
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 25px;
-            z-index: 1;
+        /* Cam Panel (Glassmorphism) Efekti */
+        .glass-card {
+            background: var(--panel-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
         }
 
-        @media (max-width: 900px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-            body {
-                padding: 20px 10px;
-            }
-        }
-
-        /* Cam Efektli Paneller */
-        .panel {
-            background: var(--card-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--card-border);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            padding-bottom: 15px;
-        }
-
-        h2 {
-            margin: 0;
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            background: linear-gradient(to right, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        h2 i {
-            color: var(--primary);
-            -webkit-text-fill-color: initial;
-        }
-
-        /* Giriş Alanı */
-        .input-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            background: rgba(15, 12, 38, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-            padding: 14px 20px;
-            border-radius: 12px;
-            font-size: 1rem;
-            outline: none;
-            font-weight: 500;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-            background: rgba(15, 12, 38, 0.8);
-        }
-
-        button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-        }
-
-        button:hover {
-            background: var(--primary-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 18px rgba(99, 102, 241, 0.5);
-        }
-
-        button:active {
-            transform: translateY(1px);
-        }
-
-        /* Hesap Listesi */
-        .account-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            max-height: 420px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
-        /* Scrollbar güzelleştirme */
-        .account-list::-webkit-scrollbar {
+        /* Kusursuz Scrollbar */
+        .custom-scroll::-webkit-scrollbar {
             width: 6px;
         }
-        .account-list::-webkit-scrollbar-track {
+        .custom-scroll::-webkit-scrollbar-track {
             background: transparent;
         }
-        .account-list::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(168, 85, 247, 0.2);
             border-radius: 10px;
         }
-
-        .account-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 14px 20px;
-            border-radius: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.4);
         }
 
-        .account-item:hover {
-            background: rgba(255, 255, 255, 0.06);
-            border-color: rgba(99, 102, 241, 0.25);
-        }
-
-        .account-name {
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: #e2e8f0;
-        }
-
-        .controls {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        /* Modern Select Tasarımı */
-        select {
-            background: rgba(15, 12, 38, 0.8);
-            color: var(--text-main);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 14px;
-            border-radius: 10px;
-            outline: none;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        select:focus {
-            border-color: var(--primary);
-        }
-
-        .btn-delete {
-            background: rgba(239, 68, 68, 0.1);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-            padding: 10px;
-            border-radius: 10px;
-            box-shadow: none;
-        }
-
-        .btn-delete:hover {
-            background: #ef4444;
-            color: white;
-            border-color: #ef4444;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-
-        .btn-clear-all {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 14px;
-            font-size: 0.85rem;
-            border-radius: 8px;
-            box-shadow: none;
-        }
-
-        .btn-clear-all:hover {
-            background: rgba(239, 68, 68, 0.15);
-            color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.3);
-            box-shadow: none;
-        }
-
-        /* Sağ Çıktı Alanı */
-        .output-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .output-box {
-            width: 100%;
-            flex-grow: 1;
-            min-height: 350px;
-            background: #090714;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #a7f3d0;
-            font-family: 'JetBrains Mono', monospace;
-            padding: 20px;
-            border-radius: 14px;
-            resize: none;
-            outline: none;
-            box-sizing: border-box;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
-        }
-
-        .output-box:focus {
-            border-color: rgba(16, 185, 129, 0.3);
-        }
-
-        .action-area {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 20px;
-        }
-
-        .btn-copy {
-            background: #10b981;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
-            width: 100%;
-            justify-content: center;
-            font-size: 1.05rem;
-            padding: 14px;
-        }
-
-        .btn-copy:hover {
-            background: #059669;
-            box-shadow: 0 6px 18px rgba(16, 185, 129, 0.4);
-        }
-
-        /* Boş Liste Uyarısı */
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .empty-state i {
-            font-size: 2.5rem;
-            color: rgba(255, 255, 255, 0.1);
+        /* Giriş Efektleri */
+        .pulse-border:focus-within {
+            border-color: var(--primary-neon);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.35);
         }
     </style>
 </head>
-<body>
+<body class="font-sans text-slate-100 p-4 md:p-8 relative">
 
-<div class="glow-sphere"></div>
-<div class="glow-sphere-2"></div>
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
 
-<div class="container">
-    <!-- SOL PANEL: GİRİŞ VE LİSTELEME -->
-    <div class="panel">
-        <div class="panel-header">
-            <h2><i class="fa-solid fa-users-gear"></i> Hesap Yönetimi</h2>
-            <button class="btn-clear-all" onclick="clearAll()" id="clearAllBtn" style="display: none;">
-                <i class="fa-solid fa-trash-can"></i> Hepsini Sil
-            </button>
-        </div>
+    <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 z-10 relative">
         
-        <div class="input-group">
-            <input type="text" id="accountInput" placeholder="Hesap adını buraya yazın..." onkeypress="handleKeyPress(event)">
-            <button onclick="addAccount()"><i class="fa-solid fa-plus"></i> Ekle</button>
-        </div>
+        <!-- SOL PANEL: HESAP YÖNETİM ALANI -->
+        <div class="lg:col-span-7 glass-card rounded-3xl p-6 md:p-8 flex flex-col justify-between min-h-[550px]">
+            <div>
+                <!-- Panel Başlığı ve Temizle Butonu -->
+                <div class="flex items-center justify-between border-b border-purple-950/40 pb-5 mb-6">
+                    <h2 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-purple-300 bg-clip-text text-transparent flex items-center gap-3">
+                        <i class="fa-solid fa-fire text-purple-500"></i>
+                        <span>Hesap Yönetim Merkezi</span>
+                    </h2>
+                    <button class="text-xs font-semibold text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-1.5 rounded-lg hover:bg-rose-500 hover:text-white transition-all duration-300 flex items-center gap-1.5" onclick="clearAll()" id="clearAllBtn" style="display: none;">
+                        <i class="fa-solid fa-trash-can"></i> Hepsini Temizle
+                    </button>
+                </div>
+                
+                <!-- Veri Ekleme Grubu -->
+                <div class="input-group flex gap-3 mb-6 pulse-border border border-purple-900/30 bg-[#0b081e]/80 rounded-xl p-1 transition-all duration-300">
+                    <input type="text" id="accountInput" class="w-full bg-transparent px-4 py-3 outline-none text-white font-medium placeholder-slate-500" placeholder="Hesap adını veya kullanıcı adını girin..." onkeypress="handleKeyPress(event)">
+                    <button onclick="addAccount()" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold px-6 py-3 rounded-lg shadow-lg shadow-purple-900/40 hover:shadow-purple-500/30 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center gap-2">
+                        <i class="fa-solid fa-plus text-xs"></i> Ekle
+                    </button>
+                </div>
 
-        <div class="account-list" id="accountList">
-            <!-- Dinamik veriler gelecek -->
-        </div>
-    </div>
-
-    <!-- SAĞ PANEL: KOPYALAMA ALANI -->
-    <div class="panel">
-        <div class="panel-header">
-            <h2><i class="fa-solid fa-clipboard-list"></i> Hazır Çıktı</h2>
-        </div>
-        <div class="output-container">
-            <textarea class="output-box" id="outputBox" readonly placeholder="Burada kopyalamaya hazır liste birikecek..."></textarea>
-            <div class="action-area">
-                <button class="btn-copy" id="copyBtn" onclick="copyToClipboard()">
-                    <i class="fa-solid fa-copy"></i> Listeyi Kopyala
-                </button>
+                <!-- Dinamik Hesap Listesi -->
+                <div class="account-list custom-scroll max-h-[380px] overflow-y-auto space-y-3 pr-2" id="accountList">
+                    <!-- Javascript ile doldurulacaktır -->
+                </div>
             </div>
         </div>
+
+        <div class="lg:col-span-5 glass-card rounded-3xl p-6 md:p-8 flex flex-col justify-between min-h-[550px]">
+            <div class="flex flex-col h-full justify-between">
+                <div>
+                    <!-- Panel Başlığı -->
+                    <div class="border-b border-purple-950/40 pb-5 mb-6">
+                        <h2 class="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-200 to-pink-300 bg-clip-text text-transparent flex items-center gap-3">
+                            <i class="fa-solid fa-circle-check text-pink-500"></i>
+                            <span>Hazır Çıktı Kutusu</span>
+                        </h2>
+                    </div>
+
+                    <!-- Çıktı Textarea Alanı -->
+                    <div class="relative group">
+                        <textarea class="w-full min-h-[320px] bg-[#090616] border border-purple-950/60 rounded-2xl p-5 text-emerald-400 font-mono text-sm leading-relaxed outline-none focus:border-purple-600 focus:ring-1 focus:ring-purple-600 shadow-inner custom-scroll transition-all duration-300" id="outputBox" readonly placeholder="Hesaplar ekledikçe burası otomatik olarak kopyalanmaya hazır şekilde dolacaktır..."></textarea>
+                        <div class="absolute top-3 right-3 flex items-center gap-1.5 bg-[#120e2e]/90 border border-purple-900/40 px-2.5 py-1 rounded-md text-[10px] font-bold text-purple-400 tracking-wider uppercase">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> CANLI ÇIKTI
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kopyalama Butonu -->
+                <div class="mt-6">
+                    <button class="w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-emerald-950/40 hover:shadow-emerald-500/20 transform hover:-translate-y-0.5 active:translate-y-0 transition-all duration-300 flex items-center justify-center gap-3 text-base" id="copyBtn" onclick="copyToClipboard()">
+                        <i class="fa-solid fa-copy text-lg"></i>
+                        <span>Listeyi Kopyala</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
-</div>
 
-<script>
-    // LocalStorage verilerini çek
-    let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+    <script>
+        // Tarayıcı hafızasından (LocalStorage) verileri yükleme
+        let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
 
-    window.onload = function() {
-        renderList();
-    };
+        window.onload = function() {
+            renderList();
+        };
 
-    function handleKeyPress(e) {
-        if (e.key === 'Enter') {
-            addAccount();
+        // Enter Tuşu Yakalama
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                addAccount();
+            }
         }
-    }
 
-    function addAccount() {
-        const input = document.getElementById('accountInput');
-        const name = input.value.trim();
-        
-        if (name === '') return;
+        // Yeni Hesap Ekleme
+        function addAccount() {
+            const input = document.getElementById('accountInput');
+            const name = input.value.trim();
+            
+            if (name === '') return;
 
-        accounts.push({
-            id: Date.now(),
-            name: name,
-            status: '1 hafta'
-        });
+            accounts.push({
+                id: Date.now(),
+                name: name,
+                status: '1 hafta'
+            });
 
-        input.value = '';
-        saveAndRefresh();
-    }
+            input.value = '';
+            saveAndRefresh();
+        }
 
-    function deleteAccount(id) {
-        accounts = accounts.filter(acc => acc.id !== id);
-        saveAndRefresh();
-    }
+        // Hesap Silme
+        function deleteAccount(id) {
+            accounts = accounts.filter(acc => acc.id !== id);
+            saveAndRefresh();
+        }
 
-    function clearAll() {
-        if(confirm("Tüm kayıtlı hesapları silmek istediğinize emin misiniz?")) {
+        // Tüm Hesapları Temizleme
+        function clearAll() {
             accounts = [];
             saveAndRefresh();
         }
-    }
 
-    function updateStatus(id, newStatus) {
-        const account = accounts.find(acc => acc.id === id);
-        if (account) {
-            account.status = newStatus;
-        }
-        saveAndRefresh();
-    }
-
-    function saveAndRefresh() {
-        localStorage.setItem('accounts', JSON.stringify(accounts));
-        renderList();
-    }
-
-    function renderList() {
-        const listContainer = document.getElementById('accountList');
-        const outputBox = document.getElementById('outputBox');
-        const clearAllBtn = document.getElementById('clearAllBtn');
-        
-        listContainer.innerHTML = '';
-        let textOutput = '';
-
-        if (accounts.length === 0) {
-            listContainer.innerHTML = `
-                <div class="empty-state">
-                    <i class="fa-solid fa-folder-open"></i>
-                    Henüz hiç hesap eklemediniz. Başlamak için yukarıya bir isim girin.
-                </div>
-            `;
-            clearAllBtn.style.display = 'none';
-        } else {
-            clearAllBtn.style.display = 'block';
+        // Durum Değiştirme Güncellemesi
+        function updateStatus(id, newStatus) {
+            const account = accounts.find(acc => acc.id === id);
+            if (account) {
+                account.status = newStatus;
+            }
+            saveAndRefresh();
         }
 
-        accounts.forEach(acc => {
-            // Liste elemanını oluştur
-            const item = document.createElement('div');
-            item.className = 'account-item';
+        // LocalStorage Kaydetme ve Yeniden Çizdirme
+        function saveAndRefresh() {
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+            renderList();
+        }
+
+        // Arayüzü Çizdirme ve Çıktıyı Formatlama
+        function renderList() {
+            const listContainer = document.getElementById('accountList');
+            const outputBox = document.getElementById('outputBox');
+            const clearAllBtn = document.getElementById('clearAllBtn');
             
-            // Seçilen duruma göre renk belirleme ayarı
-            let borderStyle = '';
-            if (acc.status === '1 hafta') borderStyle = 'border-left: 4px solid var(--color-week);';
-            else if (acc.status === 'inceleme devam ediyor') borderStyle = 'border-left: 4px solid var(--color-pending);';
-            else if (acc.status === 'itiraz yazıldı') borderStyle = 'border-left: 4px solid var(--color-appeal);';
+            listContainer.innerHTML = '';
+            let textOutput = '';
 
-            item.style = borderStyle;
-            
-            item.innerHTML = `
-                <span class="account-name">${acc.name}</span>
-                <div class="controls">
-                    <select onchange="updateStatus(${acc.id}, this.value)">
-                        <option value="1 hafta" ${acc.status === '1 hafta' ? 'selected' : ''}>1 hafta</option>
-                        <option value="inceleme devam ediyor" ${acc.status === 'inceleme devam ediyor' ? 'selected' : ''}>inceleme devam ediyor</option>
-                        <option value="itiraz yazıldı" ${acc.status === 'itiraz yazıldı' ? 'selected' : ''}>itiraz yazıldı</option>
-                    </select>
-                    <button class="btn-delete" onclick="deleteAccount(${acc.id})" title="Sil"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `;
-            listContainer.appendChild(item);
+            // Hepsini Temizle butonunun gösterilme durumu
+            if (accounts.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="flex flex-col items-center justify-center text-center py-12 px-4 text-slate-500 border border-dashed border-purple-950/40 rounded-2xl bg-[#090716]/40">
+                        <i class="fa-solid fa-box-open text-4xl mb-3 text-purple-900/60 animate-bounce"></i>
+                        <p class="text-sm font-medium">Henüz hiç hesap eklemediniz.</p>
+                        <p class="text-xs text-slate-600 mt-1">Hemen yukarıdan bir hesap ismi yazıp "Ekle" tuşuna basın.</p>
+                    </div>
+                `;
+                clearAllBtn.style.display = 'none';
+            } else {
+                clearAllBtn.style.display = 'flex';
+            }
 
-            // Sağdaki çıktı kutusu metnini birleştir (Sadece senin yazdığın isim ve durumu yazar!)
-            textOutput += `${acc.name}: ${acc.status}\n`;
-        });
+            accounts.forEach(acc => {
+                // Her hesap için dinamik liste elemanı oluştur
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between bg-[#0e0a29] border border-purple-950/40 hover:border-purple-800/60 p-3.5 rounded-xl transition-all duration-300 group';
+                
+                // Duruma göre kenar rengi belirle
+                let borderHighlight = '';
+                if (acc.status === '1 hafta') borderHighlight = 'border-l-4 border-l-blue-500';
+                else if (acc.status === 'inceleme devam ediyor') borderHighlight = 'border-l-4 border-l-amber-500';
+                else if (acc.status === 'itiraz yazıldı') borderHighlight = 'border-l-4 border-l-green-500';
 
-        outputBox.value = textOutput.trim();
-    }
+                item.className += ' ' + borderHighlight;
+                
+                item.innerHTML = `
+                    <span class="font-bold text-sm text-slate-200 truncate max-w-[200px] sm:max-w-[300px] group-hover:text-white transition-colors">${acc.name}</span>
+                    <div class="flex items-center gap-3">
+                        <select onchange="updateStatus(${acc.id}, this.value)" class="bg-[#070514] text-xs font-bold text-slate-300 border border-purple-950/80 px-3 py-2 rounded-lg outline-none cursor-pointer focus:border-purple-600 hover:text-white transition-all">
+                            <option value="1 hafta" ${acc.status === '1 hafta' ? 'selected' : ''}>1 Hafta</option>
+                            <option value="inceleme devam ediyor" ${acc.status === 'inceleme devam ediyor' ? 'selected' : ''}>İnceleme Devam Ediyor</option>
+                            <option value="itiraz yazıldı" ${acc.status === 'itiraz yazıldı' ? 'selected' : ''}>İtiraz Yazıldı</option>
+                        </select>
+                        <button class="bg-rose-500/10 hover:bg-rose-500 text-rose-400 hover:text-white border border-rose-500/10 p-2.5 rounded-lg transition-all duration-200" onclick="deleteAccount(${acc.id})" title="Hesabı Sil">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                listContainer.appendChild(item);
 
-    function copyToClipboard() {
-        const outputBox = document.getElementById('outputBox');
-        const copyBtn = document.getElementById('copyBtn');
+                // DÜZELTME: Sağdaki çıktı kutusuna sadece "kullanıcı_adı: durum" formatında ekler (Yani "hesap ismi " yazısı kalktı)
+                textOutput += `${acc.name}: ${acc.status}\n`;
+            });
 
-        if (outputBox.value.trim() === '') {
-            return;
+            outputBox.value = textOutput.trim();
         }
 
-        outputBox.select();
-        outputBox.setSelectionRange(0, 99999);
+        // Pano Kopyalama İşlemi
+        function copyToClipboard() {
+            const outputBox = document.getElementById('outputBox');
+            const copyBtn = document.getElementById('copyBtn');
 
-        navigator.clipboard.writeText(outputBox.value).then(() => {
+            if (outputBox.value.trim() === '') {
+                return;
+            }
+
+            outputBox.select();
+            outputBox.setSelectionRange(0, 99999);
+
+            // Klasik kopyalama motoru (Güvenilir mobil destek)
+            document.execCommand('copy');
+
+            // Başarılı Kopyalandı Görsel Geri Bildirimi
             const originalContent = copyBtn.innerHTML;
-            copyBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Kopyalandı!';
-            copyBtn.style.backgroundColor = '#047857';
-            copyBtn.style.boxShadow = '0 6px 18px rgba(4, 120, 87, 0.4)';
+            copyBtn.innerHTML = '<i class="fa-solid fa-circle-check text-lg"></i><span>Panoya Kopyalandı!</span>';
+            copyBtn.style.background = 'linear-gradient(to right, #059669, #10b981)';
             
             setTimeout(() => {
                 copyBtn.innerHTML = originalContent;
-                copyBtn.style.backgroundColor = '#10b981';
-                copyBtn.style.boxShadow = '0 4px 12px rgba(16, 185, 129, 0.2)';
+                copyBtn.style.background = '';
             }, 2000);
-        }).catch(err => {
-            console.error('Kopyalama başarısız: ', err);
-        });
-    }
-</script>
-
+        }
+    </script>
 </body>
 </html>
-```
-eof
-
-### GitHub'da Nasıl Güncelleyeceksin?
-Daha önce oluşturduğun **`index.html`** dosyasına gidip sağ üstteki **Kalem simgesine (Edit)** tıklayarak eski kodların hepsini silip yukarıdaki yeni kodları yapıştırman ve ardından **Commit changes** demen yeterli. 
-
-Yaklaşık 1 dakika sonra siten yeni şık görünümüyle güncellenmiş olacaktır! Siteni güle güle kullan, her şey hazır.
